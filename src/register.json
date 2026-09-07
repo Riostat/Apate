@@ -1,0 +1,14 @@
+{
+    "1":{
+        "name" : "AES-256-GCM + RSA-OAEP",
+        "description" : "Encrypts the file using AES-256-GCM and encrypts the AES key using RSA-OAEP.",
+        "class" : "Aes256GcmRsaOaep",
+        "version" : "1.0.0"
+    },
+    "2" : {
+        "name" : "chacha20-poly1305 + RSA-OAEP",
+        "description" : "Encrypts the file using chacha20-poly1305 and encrypts the chacha20 key using RSA-OAEP.",
+        "class" : "Chacha20Poly1305RsaOaep",
+        "version" : "1.0.0"
+    }
+}
