@@ -11,7 +11,7 @@ class main:
         pass
 
     def encrypt_file(self, P):
-        if encrypt.enc.locate_file(P) == True:
+        if encrypt.Aes256GcmRsaOaep.locate_file(P) == True:
             original_filename = Path(P).name
             File = Path(P).read_bytes()
             new_file = format.veilcontainer.pack(File, original_filename)

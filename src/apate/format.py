@@ -9,7 +9,7 @@ class veilcontainer:
         MAGIC = b"VEIL"
         VERSION = 1
         algorithm_id = 1  # AES-256-GCM with RSA-OAEP
-        ciphertext, nonce, rsa_protected_key = encrypt.enc.encrypt_data_aes(data)
+        ciphertext, nonce, rsa_protected_key = encrypt.Aes256GcmRsaOaep.encrypt_data_aes(data)
         filename_bytes = original_filename.encode("utf-8")
         filename_length = len(filename_bytes)
         veil_data = (
