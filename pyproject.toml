@@ -23,4 +23,4 @@ dev = [
 ]
 
 [tool.ruff.lint]
-ignore = ["I001"]
+ignore = ["I001", "FURB105"]

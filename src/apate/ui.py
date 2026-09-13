@@ -18,7 +18,9 @@ class UI:
         rich.print(banner)
 
     def get_input_path(self):
-        return self.console.input("Enter the path of the file or directory to encrypt: ")
+        return self.console.input(
+            "Enter the path of the file or directory to encrypt: "
+        )
 
     def display_success_message(self, message):
         self.console.print(panel.Panel(message, title="Success", style="green"))

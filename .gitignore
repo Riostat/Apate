@@ -7,5 +7,6 @@ wheels/
 *.egg-info
 .ruff_cache
 .vscode
+logs/
 # Virtual environments
 .venv
