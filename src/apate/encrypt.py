@@ -6,7 +6,7 @@ class RsaOaep:
     def __init__(self):
         pass
 
-    def encrypt_key_rsa(self, key):
+    def encrypt_key_rsa(self, key, original_filename):
         try:
             from cryptography.hazmat.primitives.asymmetric import rsa, padding
             from cryptography.hazmat.primitives import hashes
@@ -27,17 +27,28 @@ class RsaOaep:
                 ),
             )
             logging.info("key protected using RSA")
+            logging.info("saving the private key...")
+            self.save_key_rsa(
+                private_key_rsa = private_key,
+                original_filename = original_filename
+                )
             return rsa_protected_key
 
         except ModuleNotFoundError:
-            logging.warning("cryptography module not found. Please install it using 'pip install cryptography'")
+            logging.warning("cryptography module not found. Please install it using 'pip install cryptography")
 
-    def save_key_rsa(self, private_key_rsa, public_key_rsa) -> None:
+    def save_key_rsa(self, private_key_rsa,original_filename) -> None:
         try:
             from cryptography.hazmat.primitives import serialization
-
-            public_key_rsa = serialization.Encoding.PEM(public_key_rsa)
-            private_key_rsa = serialization.Encoding.PEM(private_key_rsa)
+            from pathlib import Path
+            original_filename = Path(original_filename).stem
+            private_key_bytes = private_key_rsa.private_bytes(
+                encoding = serialization.Encoding.PEM,
+                format = serialization.PrivateFormat.PKCS8,
+                encryption_algorithm = serialization.NoEncryption()
+            )
+            Path(f"~/.apate/{original_filename}/private_key.pem").expanduser().write_bytes(private_key_bytes)
+            logging.info("private key saved!")
 
         except ModuleNotFoundError:
             logging.warning("cryptography module not found. Please install it using 'pip install cryptography'")
@@ -64,7 +75,8 @@ class Aes256GcmRsaOaep(RsaOaep):
     @format.veilcontainer().pack
     def encrypt_data_aes(
         self,
-        data : bytes
+        data : bytes,
+        original_filename
     ) -> tuple[bytes, bytes, bytes]:  # encrypting the data using AES-GCM and returning the ciphertext, nonce, and RSA-protected key
         try:
             import os
@@ -73,21 +85,21 @@ class Aes256GcmRsaOaep(RsaOaep):
             nonce = os.urandom(12)
             key = AESGCM.generate_key(bit_length=256)
             ciphertext = AESGCM(key).encrypt(
-                nonce=nonce, data=data, associated_data=None
+                nonce=nonce, 
+                data=data, 
+                associated_data=None
             )
             rsa_protected_key = self.encrypt_key_rsa(
                 key
             )  # encrypting the AES key using RSA and returning the RSA-protected key
+            self.encrypt_key_rsa(key=key, Original_filename=original_filename)
             return ciphertext, nonce, rsa_protected_key
 
         except ImportError:
-            logging.warning("cryptography module not found. Please install it using 'pip install cryptography'")
+            logging.warning("cryptography module not found. Please install it using 'pip install cryptography")
 
-    def encrypt_key_rsa(self, key):
-        return super().encrypt_key_rsa(key)
-
-    def save_key_rsa(self, private_key_rsa, public_key_rsa):
-        return super().save_key_rsa(private_key_rsa, public_key_rsa)
+    def encrypt_key_rsa(self, key, Original_filename):
+        return super().encrypt_key_rsa(key, Original_filename)
 
 
 class Chacha20Poly1305RsaOaep(RsaOaep):
@@ -102,6 +114,3 @@ class Chacha20Poly1305RsaOaep(RsaOaep):
 
     def encrypt_key_rsa(self, key):
         return super().encrypt_key_rsa(key)
-
-    def save_key_rsa(self, private_key_rsa, public_key_rsa):
-        return super().save_key_rsa(private_key_rsa, public_key_rsa)
