@@ -71,9 +71,12 @@ class veilcontainer:
             offset += rsa_key_length
             logging.info("data unpacked successfuly!")
 
-            base_fn(
+            result = base_fn(
                 instance,
-                nonce=nonce,
-                ciphertext=ciphertext,
-                rsa_protected_key=rsa_protected_key,
+                nonce = nonce,
+                ciphertext = ciphertext,
+                rsa_protected_key = rsa_protected_key,
+                original_filename = original_filename
             )
+            return result
+        return unpack
