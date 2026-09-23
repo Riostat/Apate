@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from apate import format
 
-
+logger = logging.getLogger('apate')
 class RsaOaep:
     def __init__(self):
         pass
@@ -12,17 +12,17 @@ class RsaOaep:
             from cryptography.hazmat.primitives import serialization
             P = Path(f'~/.apate/{original_filename}/private_key.pem').expanduser()
             data = P.read_bytes()
-            logging.info("loading the .pem key")
+            logger.info("loading the .pem key")
             key = serialization.load_pem_private_key(
                 data = data,
                 password = None,
                 backend = None
                 )
-            logging.info(".pem key loaded!")
+            logger.info(".pem key loaded!")
             return key
 
         except:
-            logging.warning(".pem key could not be loaded")
+            logger.warning(".pem key could not be loaded")
 
     def decrypt_rsa_key(self,original_filename, key):
         try:
@@ -38,14 +38,13 @@ class RsaOaep:
                 ))
             return new_key
         except:
-            logging.critical("rsa protected key could not be decrypted")
+            logger.critical("rsa protected key could not be decrypted")
 
 
 class Aes256GcmRsaOaep(RsaOaep):
     def __init__(self):
         pass
 
-    @format.veilcontainer.unpack()
     def decrypt_data_aes(self, nonce, ciphertext, rsa_protected_key, original_filename):
         try:
             from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -58,7 +57,7 @@ class Aes256GcmRsaOaep(RsaOaep):
             return file
 
         except ImportError:
-            logging.warning("cryptography module not found. Please install it using 'pip install cryptography")
+            logger.warning("cryptography module not found. Please install it using 'pip install cryptography")
 
     def decrypt_rsa_key(self, original_filename, key):
         return super().decrypt_rsa_key(original_filename, key)
@@ -68,7 +67,6 @@ class Chacha20Poly1305RsaOaep(RsaOaep):
     def __init__(self):
         super().__init__()
 
-    @format.veilcontainer().unpack
     def Chacha20Poly1305(self):
         pass
 

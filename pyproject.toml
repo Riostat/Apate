@@ -18,9 +18,10 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "logger>=0.4.9.6",
     "pytest>=9.1.1",
     "ruff>=0.16.6",
 ]
 
 [tool.ruff.lint]
-ignore = ["I001", "FURB105"]
+ignore = ["I001", "FURB105", "E722"]

@@ -2,6 +2,7 @@ from pathlib import Path
 from apate import format
 import logging
 
+logger = logging.getLogger('apate')
 class RsaOaep:
     def __init__(self):
         pass
@@ -15,9 +16,9 @@ class RsaOaep:
                 public_exponent=65537,
                 key_size=2048,
             )
-            logging.info("private key genarated")
+            logger.info("private key genarated")
             public_key = private_key.public_key()
-            logging.info("public key generated")
+            logger.info("public key generated")
             rsa_protected_key = public_key.encrypt(
                 key,
                 padding.OAEP(
@@ -26,8 +27,8 @@ class RsaOaep:
                     label=None,
                 ),
             )
-            logging.info("key protected using RSA")
-            logging.info("saving the private key...")
+            logger.info("key protected using RSA")
+            logger.info("saving the private key...")
             self.save_key_rsa(
                 private_key_rsa = private_key,
                 original_filename = original_filename
@@ -35,7 +36,7 @@ class RsaOaep:
             return rsa_protected_key
 
         except ModuleNotFoundError:
-            logging.warning("cryptography module not found. Please install it using 'pip install cryptography")
+            logger.warning("cryptography module not found. Please install it using 'pip install cryptography")
 
     def save_key_rsa(self, private_key_rsa,original_filename) -> None:
         try:
@@ -48,10 +49,10 @@ class RsaOaep:
                 encryption_algorithm = serialization.NoEncryption()
             )
             Path(f"~/.apate/{original_filename}/private_key.pem").expanduser().write_bytes(private_key_bytes)
-            logging.info("private key saved!")
+            logger.info("private key saved!")
 
         except ModuleNotFoundError:
-            logging.warning("cryptography module not found. Please install it using 'pip install cryptography'")
+            logger.warning("cryptography module not found. Please install it using 'pip install cryptography'")
 
 
 class Aes256GcmRsaOaep(RsaOaep):
@@ -61,7 +62,7 @@ class Aes256GcmRsaOaep(RsaOaep):
     def locate_file(
         self, source
     ) -> bool:  # finding if the file exists and is a file or directory
-        logging.info("locating file...")
+        logger.info("locating file...")
         if Path.exists(source):
             if Path.is_file(source) or Path.is_dir(source):
                 return bool(Path.is_file(source) or Path.is_dir(source))
@@ -96,7 +97,7 @@ class Aes256GcmRsaOaep(RsaOaep):
             return ciphertext, nonce, rsa_protected_key
 
         except ImportError:
-            logging.warning("cryptography module not found. Please install it using 'pip install cryptography")
+            logger.warning("cryptography module not found. Please install it using 'pip install cryptography")
 
     def encrypt_key_rsa(self, key, Original_filename):
         return super().encrypt_key_rsa(key, Original_filename)
