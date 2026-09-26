@@ -42,8 +42,9 @@ class RsaOaep:
 
 
 class Aes256GcmRsaOaep(RsaOaep):
+    algorithm_id = 1
     def __init__(self):
-        pass
+        super().__init__()
 
     def decrypt_data_aes(self, nonce, ciphertext, rsa_protected_key, original_filename):
         try:
@@ -67,8 +68,18 @@ class Chacha20Poly1305RsaOaep(RsaOaep):
     def __init__(self):
         super().__init__()
 
-    def Chacha20Poly1305(self):
-        pass
-
+    def decrypt_data_chacha(self, nonce, ciphertext, rsa_protected_key, original_filename):
+        try:
+            from cryptography.hazmat.primitives.ciphers.aead import Chacha20Poly1305
+            key = self.decrypt_rsa_key(original_filename, rsa_protected_key)
+            file = Chacha20Poly1305(key).decrypt(
+                nonce=nonce,
+                data=ciphertext,
+                associated_data=None,
+            )
+            return file
+        except ImportError:
+            logger.warning("cryptography module not found. Please install it using 'pip install cryptography")
+    
     def decrypt_rsa_key(self, original_filename, key):
         return super().decrypt_rsa_key(original_filename, key)

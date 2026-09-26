@@ -103,15 +103,37 @@ class Aes256GcmRsaOaep(RsaOaep):
         return super().encrypt_key_rsa(key, Original_filename)
 
 
-class Chacha20Poly1305RsaOaep(RsaOaep):
+class ChaCha20Poly1305RsaOaep(RsaOaep):
+    algorithm_id = 2
+
     def __init__(self):
         super().__init__()
 
     @format.veilcontainer().pack
     def encrypt_data_chacha(
-        data : bytes
+        self,
+        data : bytes,
+        original_filename:str,
         ) -> tuple[bytes, bytes, bytes]:
-        pass
+        try:
+            import os
+            from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
+        except ModuleNotFoundError:
+            logger.warning("cryptography module not found. please install it using 'pip install cryptofraphy'")
+            raise
 
-    def encrypt_key_rsa(self, key):
-        return super().encrypt_key_rsa(key)
+        nonce = os.urandom(12)
+        key = Chacha20Poly1305.generate_key()
+        ciphertext = Chacha20Poly1305(key).encrypt(
+            
+            nonce=nonce,
+            data=data,
+            associated_data=None,
+        )
+        rsa_protected_key = self.encrypt_key_rsa(key, original_filename)
+        return ciphertext, nonce, rsa_protected_key
+
+
+
+    def encrypt_key_rsa(self, key, original_filename):
+        return super().encrypt_key_rsa(key, original_filename)

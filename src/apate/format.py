@@ -11,7 +11,7 @@ class veilcontainer:
             MAGIC: bytes = b"VEIL"
             VERSION: int = 1
             algorithm_id: int = 1
-            ciphertext, nonce, rsa_protected_key = base_fn(instance, data)
+            ciphertext, nonce, rsa_protected_key = base_fn(instance, data, original_filename)
             filename_bytes: bytes = original_filename.encode("utf-8")
             filename_length: int = len(filename_bytes)
             logger.info("starting packing data")
