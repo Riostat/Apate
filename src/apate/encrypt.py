@@ -56,8 +56,9 @@ class RsaOaep:
 
 
 class Aes256GcmRsaOaep(RsaOaep):
+    algorithm_id = 1
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
     def locate_file(
         self, source
@@ -91,7 +92,7 @@ class Aes256GcmRsaOaep(RsaOaep):
                 associated_data=None
             )
             rsa_protected_key = self.encrypt_key_rsa(
-                key
+                key, original_filename
             )  # encrypting the AES key using RSA and returning the RSA-protected key
             self.encrypt_key_rsa(key=key, Original_filename=original_filename)
             return ciphertext, nonce, rsa_protected_key

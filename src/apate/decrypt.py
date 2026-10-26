@@ -64,15 +64,15 @@ class Aes256GcmRsaOaep(RsaOaep):
         return super().decrypt_rsa_key(original_filename, key)
 
 
-class Chacha20Poly1305RsaOaep(RsaOaep):
+class ChaCha20Poly1305RsaOaep(RsaOaep):
     def __init__(self):
         super().__init__()
 
     def decrypt_data_chacha(self, nonce, ciphertext, rsa_protected_key, original_filename):
         try:
-            from cryptography.hazmat.primitives.ciphers.aead import Chacha20Poly1305
+            from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
             key = self.decrypt_rsa_key(original_filename, rsa_protected_key)
-            file = Chacha20Poly1305(key).decrypt(
+            file = ChaCha20Poly1305(key).decrypt(
                 nonce=nonce,
                 data=ciphertext,
                 associated_data=None,
